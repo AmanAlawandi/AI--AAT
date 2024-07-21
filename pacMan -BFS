@@ -1,0 +1,59 @@
+from collections import deque
+
+def nextMove(r, c, pacman_r, pacman_c, food_r, food_c, grid):
+    # Directions for movement: UP, LEFT, RIGHT, DOWN
+    directions = [(-1, 0), (0, -1), (0, 1), (1, 0)]
+    
+    # Initialize BFS
+    queue = deque([(pacman_r, pacman_c)])
+    visited = set()
+    visited.add((pacman_r, pacman_c))
+    parent = { (pacman_r, pacman_c): None }
+    
+    found = False
+    nodes_expanded = []
+    
+    while queue:
+        curr = queue.popleft()
+        nodes_expanded.append(curr)
+        
+        if curr == (food_r, food_c):
+            found = True
+            break
+        
+        for d in directions:
+            nr, nc = curr[0] + d[0], curr[1] + d[1]
+            if 0 <= nr < r and 0 <= nc < c and grid[nr][nc] != '%' and (nr, nc) not in visited:
+                queue.append((nr, nc))
+                visited.add((nr, nc))
+                parent[(nr, nc)] = curr
+
+    if not found:
+        print("Food not reachable")
+        return
+
+    # Trace path back from food to PacMan
+    path = []
+    node = (food_r, food_c)
+    while node is not None:
+        path.append(node)
+        node = parent[node]
+    path.reverse()
+    
+    # Output the nodes expanded
+    print(len(nodes_expanded))
+    for v in nodes_expanded:
+        print(f"{v[0]} {v[1]}")
+    
+    # Output the shortest path
+    print(len(path) - 1)
+    for p in path:
+        print(f"{p[0]} {p[1]}")
+
+# Example usage:
+if _name_ == '_main_':
+    pacman_r, pacman_c = map(int, input().strip().split())
+    food_r, food_c = map(int, input().strip().split())
+    r, c = map(int, input().strip().split())
+    grid = [input().strip() for _ in range(r)]
+    nextMove(r, c, pacman_r, pacman_c, food_r, food_c, grid)
