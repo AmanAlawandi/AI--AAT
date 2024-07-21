@@ -1,0 +1,67 @@
+import math
+import os
+import random
+import re
+import sys
+
+def nextMove(player, board):
+    # Define the winning combinations: rows, columns, and diagonals
+    winning_combinations = [
+        [(0, 0), (0, 1), (0, 2)],  # Row 1
+        [(1, 0), (1, 1), (1, 2)],  # Row 2
+        [(2, 0), (2, 1), (2, 2)],  # Row 3
+        [(0, 0), (1, 0), (2, 0)],  # Column 1
+        [(0, 1), (1, 1), (2, 1)],  # Column 2
+        [(0, 2), (1, 2), (2, 2)],  # Column 3
+        [(0, 0), (1, 1), (2, 2)],  # Diagonal 1
+        [(0, 2), (1, 1), (2, 0)]   # Diagonal 2
+    ]
+
+    # Check if there's a move to win
+    for combination in winning_combinations:
+        count = 0
+        empty_spot = None
+        for (r, c) in combination:
+            if board[r][c] == player:
+                count += 1
+            elif board[r][c] == '_':
+                empty_spot = (r, c)
+        if count == 2 and empty_spot:
+            print(empty_spot[0], empty_spot[1])
+            return
+
+    # Check if there's a move to block the opponent from winning
+    opponent = 'O' if player == 'X' else 'X'
+    for combination in winning_combinations:
+        count = 0
+        empty_spot = None
+        for (r, c) in combination:
+            if board[r][c] == opponent:
+                count += 1
+            elif board[r][c] == '_':
+                empty_spot = (r, c)
+        if count == 2 and empty_spot:
+            print(empty_spot[0], empty_spot[1])
+            return
+
+    # Make the first available move (prioritize the center, then corners, then sides)
+    if board[1][1] == '_':
+        print(1, 1)
+        return
+    
+    corners = [(0, 0), (0, 2), (2, 0), (2, 2)]
+    for (r, c) in corners:
+        if board[r][c] == '_':
+            print(r, c)
+            return
+    
+    sides = [(0, 1), (1, 0), (1, 2), (2, 1)]
+    for (r, c) in sides:
+        if board[r][c] == '_':
+            print(r, c)
+            return
+
+if _name_ == '_main_':
+    player = input().strip()
+    board = [list(input().strip()) for _ in range(3)]
+    nextMove(player, board)
